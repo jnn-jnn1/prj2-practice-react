@@ -33,6 +33,13 @@ export function NavBar() {
       >
         로그인
       </Box>
+      <Box
+        onClick={() => account.logout()}
+        cursor={"pointer"}
+        _hover={{ bgColor: "gray.200" }}
+      >
+        로그아웃
+      </Box>
       {account.isLoggedIn() && (
         <Box>
           <FontAwesomeIcon icon={faUser} /> {account.nickName}
