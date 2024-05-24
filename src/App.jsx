@@ -4,6 +4,16 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Home } from "./page/Home.jsx";
 import { MemberSignup } from "./page/member/MemberSignup.jsx";
 import { MemberList } from "./page/member/MemberList.jsx";
+import { MemberLogin } from "./page/member/MemberLogin.jsx";
+import axios from "axios";
+
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    return (config.headers.Authorization = `Bearer ${token}`);
+  }
+  return config;
+});
 
 const router = createBrowserRouter([
   {
@@ -21,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/member/list",
         element: <MemberList />,
+      },
+      {
+        path: "/login",
+        element: <MemberLogin />,
       },
     ],
   },
