@@ -6,11 +6,13 @@ import { MemberSignup } from "./page/member/MemberSignup.jsx";
 import { MemberList } from "./page/member/MemberList.jsx";
 import { MemberLogin } from "./page/member/MemberLogin.jsx";
 import axios from "axios";
+import * as PropTypes from "prop-types";
+import LoginProvider from "./component/LoginProvider.jsx";
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
-    return (config.headers.Authorization = `Bearer ${token}`);
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
@@ -40,11 +42,15 @@ const router = createBrowserRouter([
   },
 ]);
 
+LoginProvider.propTypes = { children: PropTypes.node };
+
 function App(props) {
   return (
-    <ChakraProvider>
-      <RouterProvider router={router}></RouterProvider>
-    </ChakraProvider>
+    <LoginProvider>
+      <ChakraProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </ChakraProvider>
+    </LoginProvider>
   );
 }
 

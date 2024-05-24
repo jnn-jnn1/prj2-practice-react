@@ -6,15 +6,17 @@ import {
   Input,
   useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 export function MemberLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const toast = useToast();
   const navigate = useNavigate();
+  const account = useContext(LoginContext);
 
   function handleLogin() {
     axios
@@ -25,17 +27,18 @@ export function MemberLogin() {
           description: "로그인 성공",
           position: "top",
         });
-        localStorage.setItem("token", res.data.token);
+        account.login(res.data.token);
         // 나중에 "/"로 경로 변경
         navigate("/member/list");
       })
-      .catch(() =>
+      .catch(() => {
         toast({
           status: "error",
           description: "로그인 실패",
           position: "top",
-        }),
-      )
+        });
+        account.logout();
+      })
       .finally();
   }
 
