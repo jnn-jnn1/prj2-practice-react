@@ -129,6 +129,7 @@ export function MemberSignup() {
           <FormLabel>이메일</FormLabel>
           <InputGroup>
             <Input
+              type={"email"}
               onChange={(e) => {
                 setEmail(e.target.value);
                 setIsCheckedEmail(false);
@@ -150,13 +151,19 @@ export function MemberSignup() {
       <Box>
         <FormControl>
           <FormLabel>비밀번호</FormLabel>
-          <Input onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            onChange={(e) => setPassword(e.target.value)}
+            type={"password"}
+          />
         </FormControl>
       </Box>
       <Box>
         <FormControl>
           <FormLabel>비밀번호 확인</FormLabel>
-          <Input onChange={(e) => setPasswordCheck(e.target.value)} />
+          <Input
+            onChange={(e) => setPasswordCheck(e.target.value)}
+            type={"password"}
+          />
           {isPasswordCheck || (
             <FormHelperText>비밀번호가 다릅니다</FormHelperText>
           )}

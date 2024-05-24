@@ -5,7 +5,7 @@ export function NavBar() {
   const navigate = useNavigate();
 
   return (
-    <Flex>
+    <Flex gap={3}>
       <Box
         onClick={() => navigate("/signup")}
         cursor={"pointer"}
