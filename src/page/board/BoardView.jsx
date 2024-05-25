@@ -4,8 +4,15 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Textarea,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -17,6 +24,7 @@ export function BoardView() {
   const [board, setBoard] = useState(null);
   const navigate = useNavigate();
   const toast = useToast();
+  const { onOpen, onClose, isOpen } = useDisclosure();
 
   useEffect(() => {
     axios
@@ -54,7 +62,8 @@ export function BoardView() {
           description: "게시물 삭제 실패!",
           position: "top",
         });
-      });
+      })
+      .finally(() => onClose());
   }
 
   return (
@@ -83,10 +92,23 @@ export function BoardView() {
         >
           수정
         </Button>
-        <Button colorScheme={"red"} onClick={handleDelete}>
+        <Button colorScheme={"red"} onClick={onOpen}>
           삭제
         </Button>
       </Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalBody>삭제하시겠습니까?</ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>취소</Button>
+            <Button colorScheme={"red"} onClick={handleDelete}>
+              삭제
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
