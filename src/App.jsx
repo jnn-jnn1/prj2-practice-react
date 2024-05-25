@@ -8,6 +8,8 @@ import { MemberLogin } from "./page/member/MemberLogin.jsx";
 import axios from "axios";
 import * as PropTypes from "prop-types";
 import LoginProvider from "./component/LoginProvider.jsx";
+import { BoardList } from "./page/board/BoardList.jsx";
+import { BoardWrite } from "./page/board/BoardWrite.jsx";
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
@@ -24,7 +26,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: null,
+        element: <BoardList />,
       },
       {
         path: "/signup",
@@ -38,6 +40,7 @@ const router = createBrowserRouter([
         path: "/login",
         element: <MemberLogin />,
       },
+      { path: "write", element: <BoardWrite /> },
     ],
   },
 ]);

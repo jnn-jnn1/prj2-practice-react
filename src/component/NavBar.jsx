@@ -11,6 +11,20 @@ export function NavBar() {
 
   return (
     <Flex gap={3}>
+      <Box
+        onClick={() => navigate("/")}
+        cursor={"pointer"}
+        _hover={{ bgColor: "gray.200" }}
+      >
+        글 목록
+      </Box>
+      <Box
+        onClick={() => navigate("/write")}
+        cursor={"pointer"}
+        _hover={{ bgColor: "gray.200" }}
+      >
+        글쓰기
+      </Box>
       <Spacer />
       <Box
         onClick={() => navigate("/signup")}
