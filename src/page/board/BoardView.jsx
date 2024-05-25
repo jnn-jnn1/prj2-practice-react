@@ -39,7 +39,7 @@ export function BoardView() {
 
   function handleDelete() {
     axios
-      .delete("/api/board/delete")
+      .delete(`/api/board/${id}`)
       .then(() => {
         toast({
           status: "success",
