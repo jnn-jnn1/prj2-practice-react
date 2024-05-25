@@ -10,6 +10,7 @@ import * as PropTypes from "prop-types";
 import LoginProvider from "./component/LoginProvider.jsx";
 import { BoardList } from "./page/board/BoardList.jsx";
 import { BoardWrite } from "./page/board/BoardWrite.jsx";
+import { BoardView } from "./page/board/BoardView.jsx";
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
@@ -41,6 +42,7 @@ const router = createBrowserRouter([
         element: <MemberLogin />,
       },
       { path: "write", element: <BoardWrite /> },
+      { path: "/board/:id", element: <BoardView /> },
     ],
   },
 ]);
