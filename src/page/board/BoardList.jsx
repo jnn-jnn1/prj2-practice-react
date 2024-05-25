@@ -17,16 +17,18 @@ export function BoardList() {
         <Thead>
           <Tr>
             <Th>#</Th>
+            <Th>제목</Th>
             <Th>작성자</Th>
             <Th>작성일자</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {boardList.map((member) => (
-            <Tr key={member.id}>
-              <Td>{member.id}</Td>
-              <Td>{member.writer}</Td>
-              <Td>{member.dateAndTime}</Td>
+          {boardList.map((board) => (
+            <Tr key={board.id}>
+              <Td>{board.id}</Td>
+              <Td>{board.title}</Td>
+              <Td>{board.writer}</Td>
+              <Td>{board.dateAndTime}</Td>
             </Tr>
           ))}
         </Tbody>

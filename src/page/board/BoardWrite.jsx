@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Input,
   Textarea,
@@ -42,6 +43,15 @@ export function BoardWrite() {
       .finally(() => setIsLoading(false));
   }
 
+  let disableSaveButton = false;
+  if (title.trim().length === 0) {
+    disableSaveButton = true;
+  }
+
+  if (content.trim().length === 0) {
+    disableSaveButton = true;
+  }
+
   return (
     <Box>
       <Box>새 글 작성</Box>
@@ -49,12 +59,18 @@ export function BoardWrite() {
         <FormControl>
           <FormLabel>제목</FormLabel>
           <Input onChange={(e) => setTitle(e.target.value)} />
+          {disableSaveButton && (
+            <FormHelperText>제목을 입력해주세요</FormHelperText>
+          )}
         </FormControl>
       </Box>
       <Box>
         <FormControl>
           <FormLabel>내용</FormLabel>
           <Textarea onChange={(e) => setContent(e.target.value)} />
+          {disableSaveButton && (
+            <FormHelperText>내용을 입력해주세요</FormHelperText>
+          )}
         </FormControl>
       </Box>
       <Box>
@@ -64,7 +80,12 @@ export function BoardWrite() {
         </FormControl>
       </Box>
       <Box>
-        <Button colorScheme={"blue"} onClick={handleSave}>
+        <Button
+          colorScheme={"blue"}
+          onClick={handleSave}
+          isLoading={isLoading}
+          isDisabled={disableSaveButton}
+        >
           저장
         </Button>
       </Box>
