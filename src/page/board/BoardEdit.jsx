@@ -4,6 +4,12 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Textarea,
   useDisclosure,
@@ -18,7 +24,7 @@ export function BoardEdit() {
   const [board, setBoard] = useState(null);
   const toast = useToast();
   const navigate = useNavigate();
-  const { isOpen, isClose, onClose } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
     axios.get(`/api/board/${id}`).then((res) => setBoard(res.data));
@@ -45,7 +51,18 @@ export function BoardEdit() {
           description: "게시물 수정 실패!",
           position: "top",
         });
-      });
+      })
+      .finally(() => onClose());
+  }
+
+  let isDisable = false;
+
+  if (board.title.trim().length === 0) {
+    isDisable = true;
+  }
+
+  if (board.content.trim().length === 0) {
+    isDisable = true;
   }
 
   return (
@@ -76,11 +93,23 @@ export function BoardEdit() {
         </FormControl>
       </Box>
       <Box>
-        <Button colorScheme={"blue"} onClick={handleEdit}>
+        <Button colorScheme={"blue"} onClick={onOpen} isDisabled={isDisable}>
           저장
         </Button>
       </Box>
-      <Modal isOpen={isOpen} onClose={onClose}></Modal>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalBody>저장하시겠습니까?</ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>취소</Button>
+            <Button colorScheme={"blue"} onClick={handleEdit}>
+              저장
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
