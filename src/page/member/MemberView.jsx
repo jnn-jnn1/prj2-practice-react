@@ -36,7 +36,7 @@ export function MemberView() {
       .catch(() => {
         toast({
           status: "error",
-          description: "존재하지 않는 회원입니다",
+          description: "권한이 없습니다",
           position: "top",
         });
       });
