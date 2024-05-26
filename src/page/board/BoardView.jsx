@@ -16,8 +16,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 export function BoardView() {
   const { id } = useParams();
@@ -25,6 +26,7 @@ export function BoardView() {
   const navigate = useNavigate();
   const toast = useToast();
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const account = useContext(LoginContext);
 
   useEffect(() => {
     axios
@@ -85,17 +87,19 @@ export function BoardView() {
         <FormLabel>작성일자</FormLabel>
         <Input value={board.dateAndTime} readOnly />
       </FormControl>
-      <Box>
-        <Button
-          colorScheme={"blue"}
-          onClick={() => navigate(`/board/edit/${id}`)}
-        >
-          수정
-        </Button>
-        <Button colorScheme={"red"} onClick={onOpen}>
-          삭제
-        </Button>
-      </Box>
+      {account.hasAccess(board.memberId) && (
+        <Box>
+          <Button
+            colorScheme={"blue"}
+            onClick={() => navigate(`/board/edit/${id}`)}
+          >
+            수정
+          </Button>
+          <Button colorScheme={"red"} onClick={onOpen}>
+            삭제
+          </Button>
+        </Box>
+      )}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
