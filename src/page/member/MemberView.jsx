@@ -14,9 +14,10 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 export function MemberView() {
   const [member, setMember] = useState(null);
@@ -24,9 +25,21 @@ export function MemberView() {
   const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const account = useContext(LoginContext);
 
   useEffect(() => {
-    axios.get(`/api/member/${id}`).then((res) => setMember(res.data));
+    axios
+      .get(`/api/member/${id}`)
+      .then((res) => setMember(res.data))
+      .catch(() => {
+        toast({
+          status: "error",
+          description: "존재하지 않는 회원입니다",
+          position: "top",
+        });
+      });
   }, []);
 
   if (member === null) {
@@ -34,8 +47,15 @@ export function MemberView() {
   }
 
   function handleDelete() {
+    setIsLoading(true);
+
     axios
-      .delete(`/api/member/${id}`)
+      .delete(`/api/member/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        data: { id, password },
+      })
       .then(() => {
         toast({
           status: "success",
@@ -43,6 +63,7 @@ export function MemberView() {
           position: "top",
         });
         navigate("/");
+        account.logout();
       })
       .catch(() => {
         toast({
@@ -50,6 +71,7 @@ export function MemberView() {
           description: "회원 삭제 실패!",
           position: "top",
         });
+        navigate(-1);
       })
       .finally(() => onClose());
   }
@@ -60,41 +82,52 @@ export function MemberView() {
       <Box>
         <FormControl>
           <FormLabel>이메일</FormLabel>
-          <Input value={member.email} />
+          <Input value={member.email} isReadOnly />
         </FormControl>
       </Box>
       <Box>
         <FormControl>
           <FormLabel>닉네임</FormLabel>
-          <Input value={member.nickName} />
+          <Input value={member.nickName} isReadOnly />
         </FormControl>
       </Box>
       <Box>
         <FormControl>
           <FormLabel>가입일시</FormLabel>
-          <Input value={member.signupDateAndTime} />
+          <Input value={member.signupDateAndTime} isReadOnly />
         </FormControl>
       </Box>
-      <Box>
-        <Button
-          colorScheme={"blue"}
-          onClick={() => navigate(`/member/edit/${id}`)}
-        >
-          수정
-        </Button>
-        <Button colorScheme={"red"} onClick={onOpen}>
-          삭제
-        </Button>
-      </Box>
+      {account.hasAccess(member.id) && (
+        <Box>
+          <Button
+            colorScheme={"blue"}
+            onClick={() => navigate(`/member/edit/${id}`)}
+          >
+            수정
+          </Button>
+          <Button colorScheme={"red"} onClick={onOpen}>
+            삭제
+          </Button>
+        </Box>
+      )}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader></ModalHeader>
-          <ModalBody>삭제하시겠습니까?</ModalBody>
+          <ModalHeader>탈퇴 확인</ModalHeader>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>암호</FormLabel>
+              <Input onChange={(e) => setPassword(e.target.value)} />
+            </FormControl>
+          </ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>취소</Button>
-            <Button colorScheme={"red"} onClick={handleDelete}>
-              삭제
+            <Button
+              colorScheme={"red"}
+              onClick={handleDelete}
+              isLoading={isLoading}
+            >
+              확인
             </Button>
           </ModalFooter>
         </ModalContent>
