@@ -4,7 +4,14 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -16,6 +23,7 @@ export function MemberView() {
   const { id } = useParams();
   const toast = useToast();
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     axios.get(`/api/member/${id}`).then((res) => setMember(res.data));
@@ -26,7 +34,24 @@ export function MemberView() {
   }
 
   function handleDelete() {
-    axios.delete(`/api/${id}`).then().catch();
+    axios
+      .delete(`/api/member/${id}`)
+      .then(() => {
+        toast({
+          status: "success",
+          description: "회원 삭제 성공!",
+          position: "top",
+        });
+        navigate("/");
+      })
+      .catch(() => {
+        toast({
+          status: "error",
+          description: "회원 삭제 실패!",
+          position: "top",
+        });
+      })
+      .finally(() => onClose());
   }
 
   return (
@@ -52,15 +77,28 @@ export function MemberView() {
       </Box>
       <Box>
         <Button
-          colorShceme={"blue"}
-          onClick={() => navigate(`/memeber/edit/${id}`)}
+          colorScheme={"blue"}
+          onClick={() => navigate(`/member/edit/${id}`)}
         >
           수정
         </Button>
-        <Button colorShceme={"red"} onClick={handleDelete}>
+        <Button colorScheme={"red"} onClick={onOpen}>
           삭제
         </Button>
       </Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalBody>삭제하시겠습니까?</ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>취소</Button>
+            <Button colorScheme={"red"} onClick={handleDelete}>
+              삭제
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
