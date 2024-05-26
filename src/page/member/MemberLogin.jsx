@@ -28,8 +28,7 @@ export function MemberLogin() {
           position: "top",
         });
         account.login(res.data.token);
-        // 나중에 "/"로 경로 변경
-        navigate("/member/list");
+        navigate("/");
       })
       .catch(() => {
         toast({
@@ -39,7 +38,10 @@ export function MemberLogin() {
         });
         account.logout();
       })
-      .finally();
+      .finally(() => {
+        setPassword("");
+        setEmail("");
+      });
   }
 
   return (

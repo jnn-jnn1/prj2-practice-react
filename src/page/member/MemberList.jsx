@@ -7,6 +7,7 @@ import {
   Th,
   Thead,
   Tr,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -15,11 +16,22 @@ import { useNavigate } from "react-router-dom";
 export function MemberList() {
   const [memberList, setMemberList] = useState(null);
   const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
-    axios.get("/api/member/list").then((res) => {
-      setMemberList(res.data);
-    });
+    axios
+      .get("/api/member/list")
+      .then((res) => {
+        setMemberList(res.data);
+      })
+      .catch(() => {
+        toast({
+          status: "error",
+          description: "관리자가 아닙니다",
+          position: "top",
+        });
+        navigate("/");
+      });
   }, []);
 
   if (memberList === null) {

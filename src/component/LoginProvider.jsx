@@ -19,6 +19,10 @@ export function LoginProvider({ children }) {
     return Date.now() < expired * 1000;
   }
 
+  function isAdmin() {
+    return authority.includes("admin");
+  }
+
   function hasAccess(param) {
     return id == param;
   }
@@ -50,6 +54,7 @@ export function LoginProvider({ children }) {
         logout,
         isLoggedIn,
         hasAccess,
+        isAdmin,
       }}
     >
       {children}
