@@ -2,6 +2,9 @@ import {
   Box,
   Button,
   Center,
+  Flex,
+  Input,
+  Select,
   Table,
   Tbody,
   Td,
@@ -18,12 +21,28 @@ export function BoardList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [pageInfo, setPageInfo] = useState({});
+  const [searchType, setSearchType] = useState("all");
+  const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
     axios.get(`/api/board/list?${searchParams}`).then((res) => {
       setBoardList(res.data.boardList);
       setPageInfo(res.data.pageInfo);
     });
+
+    setKeyword("");
+    setSearchType("all");
+
+    const typeParam = searchParams.get("type");
+    const keywordParam = searchParams.get("keyword");
+
+    if (typeParam) {
+      setSearchType(typeParam);
+    }
+
+    if (keywordParam) {
+      setKeyword(keywordParam);
+    }
   }, [searchParams]);
 
   let pageNumbers = [];
@@ -34,7 +53,11 @@ export function BoardList() {
 
   function handlePage(pageNumber) {
     searchParams.set("page", pageNumber);
-    navigate(`/?page=${pageNumber}`);
+    navigate(`/?${searchParams}`);
+  }
+
+  function handleSearchClick() {
+    navigate(`/?type=${searchType}&keyword=${keyword}`);
   }
 
   return (
@@ -69,12 +92,28 @@ export function BoardList() {
         </Table>
       )}
       <Center>
+        <Flex>
+          <Select
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+          >
+            <option value={"all"}>제목, 내용, 작성자</option>
+            <option value={"text"}>제목, 내용</option>
+            <option value={"nickName"}>작성자</option>
+          </Select>
+          <Input
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder={"검색어"}
+          />
+          <Button onClick={handleSearchClick}>조회</Button>
+        </Flex>
+      </Center>
+      <Center>
         {pageInfo.prevPageNumber && (
           <>
-            <Button onClick={() => navigate("/?page=1")}>맨앞</Button>
-            <Button
-              onClick={() => navigate(`/?page=${pageInfo.prevPageNumber}`)}
-            >
+            <Button onClick={() => handlePage(1)}>맨앞</Button>
+            <Button onClick={() => handlePage(pageInfo.prevPageNumber)}>
               이전
             </Button>
           </>
@@ -94,14 +133,10 @@ export function BoardList() {
         </Box>
         {pageInfo.nextPageNumber && (
           <>
-            <Button
-              onClick={() => navigate(`/?page=${pageInfo.nextPageNumber}`)}
-            >
+            <Button onClick={() => handlePage(pageInfo.nextPageNumber)}>
               다음
             </Button>
-            <Button
-              onClick={() => navigate(`/?page=${pageInfo.lastPageNumber}`)}
-            >
+            <Button onClick={() => handlePage(pageInfo.lastPageNumber)}>
               맨끝
             </Button>
           </>
