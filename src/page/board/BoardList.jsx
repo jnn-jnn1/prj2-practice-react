@@ -28,7 +28,7 @@ export function BoardList() {
 
   let pageNumbers = [];
 
-  for (let i = pageInfo.leftPageNumber; i < pageInfo.rightPageNumber; i++) {
+  for (let i = pageInfo.leftPageNumber; i < pageInfo.rightPageNumber + 1; i++) {
     pageNumbers.push(i);
   }
 
@@ -40,31 +40,34 @@ export function BoardList() {
   return (
     <Box>
       <Box>게시물 목록</Box>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>#</Th>
-            <Th>제목</Th>
-            <Th>작성자</Th>
-            <Th>작성일자</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {boardList.map((board) => (
-            <Tr
-              key={board.id}
-              _hover={{ bgColor: "gray.200" }}
-              cursor={"pointer"}
-              onClick={() => navigate(`/board/${board.id}`)}
-            >
-              <Td>{board.id}</Td>
-              <Td>{board.title}</Td>
-              <Td>{board.writer}</Td>
-              <Td>{board.dateAndTime}</Td>
+      {boardList.length === 0 && <Center>조회 결과가 없습니다</Center>}
+      {boardList.length > 0 && (
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>#</Th>
+              <Th>제목</Th>
+              <Th>작성자</Th>
+              <Th>작성일자</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {boardList.map((board) => (
+              <Tr
+                key={board.id}
+                _hover={{ bgColor: "gray.200" }}
+                cursor={"pointer"}
+                onClick={() => navigate(`/board/${board.id}`)}
+              >
+                <Td>{board.id}</Td>
+                <Td>{board.title}</Td>
+                <Td>{board.writer}</Td>
+                <Td>{board.dateAndTime}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      )}
       <Center>
         {pageInfo.prevPageNumber && (
           <>
