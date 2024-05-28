@@ -20,11 +20,12 @@ export function BoardWrite() {
   const toast = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
 
   function handleSave() {
     setIsLoading(true);
     axios
-      .post("/api/board/write", { title, content })
+      .postForm("/api/board/write", { title, content, fileList })
       .then(() => {
         toast({
           status: "success",
@@ -52,6 +53,12 @@ export function BoardWrite() {
     disableSaveButton = true;
   }
 
+  let fileNameList = [];
+
+  for (let i = 0; i < fileList.length; i++) {
+    fileNameList.push(<li key={i}>{fileList[i].name}</li>);
+  }
+
   return (
     <Box>
       <Box>새 글 작성</Box>
@@ -72,6 +79,20 @@ export function BoardWrite() {
             <FormHelperText>내용을 입력해주세요</FormHelperText>
           )}
         </FormControl>
+      </Box>
+      <Box>
+        <FormControl>
+          <FormLabel>파일</FormLabel>
+          <Input
+            type={"file"}
+            multiple
+            accept={"image/*"}
+            onChange={(e) => setFileList(e.target.files)}
+          />
+        </FormControl>
+      </Box>
+      <Box>
+        <ul>{fileNameList}</ul>
       </Box>
       <Box>
         <FormControl>

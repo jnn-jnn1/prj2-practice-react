@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   Center,
@@ -8,6 +9,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -15,6 +17,8 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function BoardList() {
   const [boardList, setBoardList] = useState([]);
@@ -83,7 +87,17 @@ export function BoardList() {
                 onClick={() => navigate(`/board/${board.id}`)}
               >
                 <Td>{board.id}</Td>
-                <Td>{board.title}</Td>
+                <Td>
+                  {board.title}
+                  <Badge m={1}>
+                    {board.numberOfImages > 0 && (
+                      <Flex>
+                        <FontAwesomeIcon icon={faImage} />
+                        <Text>{board.numberOfImages}</Text>
+                      </Flex>
+                    )}
+                  </Badge>
+                </Td>
                 <Td>{board.writer}</Td>
                 <Td>{board.dateAndTime}</Td>
               </Tr>
