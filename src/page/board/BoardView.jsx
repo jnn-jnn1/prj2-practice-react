@@ -12,7 +12,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Text,
   Textarea,
   useDisclosure,
   useToast,
@@ -82,11 +81,10 @@ export function BoardView() {
         <Textarea value={board.content} readOnly />
       </FormControl>
       <Box border={"1px solid black"}>
-        {board.files.src &&
-          board.files.src.map((src) => (
-            <Box key={src} border={"2px solid black"} m={3}>
-              <Image src={src} />
-              <Text>{src}</Text>
+        {board.files &&
+          board.files.map((file) => (
+            <Box key={file.src} border={"2px solid black"} m={3}>
+              <Image src={file.src} />
             </Box>
           ))}
       </Box>

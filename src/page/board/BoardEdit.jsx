@@ -1,8 +1,10 @@
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -11,6 +13,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  Switch,
+  Text,
   Textarea,
   useDisclosure,
   useToast,
@@ -18,6 +22,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function BoardEdit() {
   const { id } = useParams();
@@ -25,9 +31,14 @@ export function BoardEdit() {
   const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [fileList, setFileList] = useState([]);
+  const [removeFileList, setRemoveFileList] = useState([]);
 
   useEffect(() => {
-    axios.get(`/api/board/${id}`).then((res) => setBoard(res.data));
+    axios.get(`/api/board/${id}`).then((res) => {
+      setBoard(res.data);
+      setFileList(res.data.files);
+    });
   }, []);
 
   if (board === null) {
@@ -36,7 +47,12 @@ export function BoardEdit() {
 
   function handleEdit() {
     axios
-      .post("/api/board/edit", board)
+      .postForm("/api/board/edit", {
+        id: board.id,
+        title: board.title,
+        content: board.content,
+        removeFileList,
+      })
       .then(() => {
         toast({
           status: "success",
@@ -65,6 +81,14 @@ export function BoardEdit() {
     isDisable = true;
   }
 
+  function handleRemoveSwitchChange(name, checked) {
+    if (checked) {
+      setRemoveFileList([...removeFileList, name]);
+    } else {
+      setRemoveFileList(removeFileList.filter((item) => item !== name));
+    }
+  }
+
   return (
     <Box>
       <Box>게시물 수정</Box>
@@ -85,6 +109,30 @@ export function BoardEdit() {
             onChange={(e) => setBoard({ ...board, content: e.target.value })}
           />
         </FormControl>
+      </Box>
+      <Box>
+        {fileList &&
+          fileList.map((file) => (
+            <Box key={file.src} border={"2px solid black"} m={3}>
+              <Flex>
+                <FontAwesomeIcon icon={faTrashCan} />
+                <Switch
+                  onChange={(e) =>
+                    handleRemoveSwitchChange(file.name, e.target.checked)
+                  }
+                />
+                <Text>{file.name}</Text>
+              </Flex>
+              <Image
+                src={file.src}
+                sx={
+                  removeFileList.includes(file.name)
+                    ? { filter: "blur(8px)" }
+                    : {}
+                }
+              />
+            </Box>
+          ))}
       </Box>
       <Box>
         <FormControl>
