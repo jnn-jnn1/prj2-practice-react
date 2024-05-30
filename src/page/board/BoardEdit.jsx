@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   Flex,
@@ -33,6 +34,7 @@ export function BoardEdit() {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [fileList, setFileList] = useState([]);
   const [removeFileList, setRemoveFileList] = useState([]);
+  const [addFileList, setAddFileList] = useState([]);
 
   useEffect(() => {
     axios.get(`/api/board/${id}`).then((res) => {
@@ -52,6 +54,7 @@ export function BoardEdit() {
         title: board.title,
         content: board.content,
         removeFileList,
+        addFileList,
       })
       .then(() => {
         toast({
@@ -79,6 +82,25 @@ export function BoardEdit() {
 
   if (board.content.trim().length === 0) {
     isDisable = true;
+  }
+
+  const fileNameList = [];
+
+  for (let addFile of addFileList) {
+    let duplicate = false;
+
+    for (let file of fileList) {
+      if (file.name === addFile.name) {
+        duplicate = true;
+        break;
+      }
+    }
+    fileNameList.push(
+      <li>
+        {addFile.name}
+        {duplicate && <Badge colorScheme={"red"}>override</Badge>}
+      </li>,
+    );
   }
 
   function handleRemoveSwitchChange(name, checked) {
@@ -133,6 +155,20 @@ export function BoardEdit() {
               />
             </Box>
           ))}
+      </Box>
+      <Box>
+        <FormControl>
+          <FormLabel>파일</FormLabel>
+          <Input
+            type={"file"}
+            multiple
+            accept={"image/*"}
+            onChange={(e) => setAddFileList(e.target.files)}
+          />
+        </FormControl>
+      </Box>
+      <Box>
+        <ul>{fileNameList}</ul>
       </Box>
       <Box>
         <FormControl>
