@@ -17,6 +17,10 @@ export function MemberLogin() {
   const toast = useToast();
   const navigate = useNavigate();
   const account = useContext(LoginContext);
+  const [code, setCode] = useState("");
+
+  const kakaoId = import.meta.env.VITE_KAKAO_ID;
+  const kakaoUri = import.meta.env.VITE_KAKAO_URL;
 
   function handleLogin() {
     axios
@@ -66,6 +70,17 @@ export function MemberLogin() {
         <Button colorScheme={"blue"} onClick={handleLogin}>
           로그인
         </Button>
+        <a
+          href={
+            "https://kauth.kakao.com/oauth/authorize?client_id=" +
+            kakaoId +
+            "&redirect_uri=" +
+            kakaoUri +
+            "&response_type=code"
+          }
+        >
+          카카오톡 로그인
+        </a>
       </Box>
     </Box>
   );
